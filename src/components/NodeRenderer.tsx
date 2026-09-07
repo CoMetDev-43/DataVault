@@ -85,7 +85,12 @@ function renderNode(node: CodexNode): React.ReactNode {
 
     case "p":
       return (
-        <p className={alignClass(node.align)} style={sizeStyle(node.size)}>
+        <p
+          className={[alignClass(node.align), node.red ? "dv-red" : null]
+            .filter(Boolean)
+            .join(" ") || undefined}
+          style={sizeStyle(node.size)}
+        >
           {renderNodes(node.c)}
         </p>
       );

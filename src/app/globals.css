@@ -123,6 +123,7 @@
   --link: #e08b3f;
   --link-alt: #55b9b1;
   --link-hot: #ffd9a0;
+  --ink-red: #e8323c;
 
   --lightbar: #dcf5f7;
   --metal: #6d7269;
@@ -929,6 +930,17 @@ body {
 }
 .dv-doc p.dv-right {
   text-align: right;
+}
+
+/*
+ * The red the game draws a handful of lines in - the Druon announcement's
+ * release note, the Truth Depot's headings and prices. Sampled from the
+ * reference screenshots: the format records only that these lines are a
+ * different kind of record, never which red, so the value lives here.
+ */
+.dv-doc p.dv-red,
+.dv-doc p.dv-red b {
+  color: var(--ink-red);
 }
 img.dv-center {
   display: block;

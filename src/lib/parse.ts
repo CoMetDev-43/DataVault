@@ -6,7 +6,7 @@
  *   containers : p, b, a, table, tr, td   (all properly closed - verified balanced)
  *   void       : br, img
  *   attributes : href (on a), src (on img), align (on p and img),
- *                size (on p), align="right" (on td)
+ *                size (on p), color="red" (on p), align="right" (on td)
  *   entities   : &#x27; &quot; &amp; &lt; &gt;
  *   comments   : <!-- images: ... --> and <!-- links: ... -->
  *
@@ -20,7 +20,7 @@ export type CodexNode =
   | { t: "text"; v: string }
   | { t: "br" }
   | { t: "img"; src: string; centred: boolean }
-  | { t: "p"; c: CodexNode[]; align: Align; size: number | null }
+  | { t: "p"; c: CodexNode[]; align: Align; size: number | null; red: boolean }
   | { t: "b"; c: CodexNode[] }
   | { t: "a"; href: string; c: CodexNode[] }
   | { t: "table"; rows: CodexCell[][] };
@@ -77,6 +77,8 @@ type Frame = {
   size?: number | null;
   /** align="right" on a td. */
   right?: boolean;
+  /** color="red" on a p - see isRedAttr. */
+  red?: boolean;
 };
 
 /**
@@ -102,6 +104,15 @@ function isCentredAttr(attrs: string): boolean {
  */
 function isRightAttr(attrs: string): boolean {
   return alignAttr(attrs) === "right";
+}
+
+/**
+ * Text the game draws red. The format marks it not with a colour but with a
+ * record laid out differently from every other - all five in the corpus are
+ * red, so the extractor writes color="red" wherever it finds one.
+ */
+function isRedAttr(attrs: string): boolean {
+  return /\bcolor\s*=\s*"red"/i.test(attrs);
 }
 
 /**
@@ -220,6 +231,7 @@ export function parseCodexHtml(html: string): CodexNode[] {
         align: alignAttr(attrs),
         size: sizeAttr(attrs),
         right: isRightAttr(attrs),
+        red: isRedAttr(attrs),
       });
       continue;
     }
@@ -285,6 +297,7 @@ function closeFrame(stack: Frame[]): void {
         c: frame.children,
         align: frame.align ?? null,
         size: frame.size ?? null,
+        red: !!frame.red,
       });
       return;
     default:
